@@ -13,9 +13,8 @@ var pressed = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var guard_block = basic_block_scene.instance();
-	guard_block.translation = Vector3(0, -2, 0)
-	add_child(guard_block)
+
+	create_guards()
 	
 	var basic_block = basic_block_scene.instance()
 	
@@ -34,6 +33,21 @@ func _ready():
 	add_child(basic_block)
 	current_block = basic_block
 
+func create_guards():
+	for n in 20:
+		var guard_block_a = basic_block_scene.instance();
+		guard_block_a.translation = Vector3(-5, -n, 0)
+		add_child(guard_block_a)
+		
+		var guard_block_b = basic_block_scene.instance();
+		guard_block_b.translation = Vector3(6, -n, 0)
+		add_child(guard_block_b)
+	
+	for n in 12:
+		var guard_block = basic_block_scene.instance();
+		guard_block.translation = Vector3(-5 + n, -20, 0)
+		add_child(guard_block)
+		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
@@ -41,7 +55,7 @@ func _ready():
 
 
 func _on_Timer_timeout():
-	current_block.move_and_collide(Vector3(0, -1, 0))
+	#current_block.move_and_collide(Vector3(0, -1, 0))
 	pressed = false
 
 func _physics_process(delta):
@@ -55,5 +69,8 @@ func _physics_process(delta):
 		direction.y -= 1
 
 	if !pressed && direction != Vector3.ZERO:
-		current_block.move_and_collide(direction)
-		pressed = true
+		var result = current_block.move_and_collide(direction, true, true, true)
+		print(result)
+		if !result:
+			current_block.move_and_collide(direction)
+			pressed = true
