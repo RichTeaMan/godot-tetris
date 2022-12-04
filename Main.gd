@@ -8,10 +8,16 @@ export (PackedScene) var basic_block_scene
 
 var current_block
 
+var pressed = false
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var basic_block = basic_block_scene.instance();
+	var guard_block = basic_block_scene.instance();
+	guard_block.translation = Vector3(0, -2, 0)
+	add_child(guard_block)
+	
+	var basic_block = basic_block_scene.instance()
 	
 	# get a random location
 	#var mob_spawn_location = get_node("SpawnPath/SpawnLocation")
@@ -35,7 +41,8 @@ func _ready():
 
 
 func _on_Timer_timeout():
-	pass # Replace with function body.
+	current_block.move_and_collide(Vector3(0, -1, 0))
+	pressed = false
 
 func _physics_process(delta):
 	var direction = Vector3.ZERO
@@ -46,5 +53,7 @@ func _physics_process(delta):
 		direction.x -= 1
 	if Input.is_action_pressed("down"):
 		direction.y -= 1
-		
-	current_block.move_and_slide(direction, Vector3.UP)
+
+	if !pressed && direction != Vector3.ZERO:
+		current_block.move_and_collide(direction)
+		pressed = true
