@@ -54,6 +54,11 @@ rotate_anticlockwise={
  ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="guard_blocks"
+3d_physics/layer_2="placed_blocks"
+
 [physics]
 
 common/enable_pause_aware_picking=true
