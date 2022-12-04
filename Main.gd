@@ -15,7 +15,9 @@ var pressed = false
 func _ready():
 
 	create_guards()
-	
+	spawn_block()
+
+func spawn_block():
 	var basic_block = basic_block_scene.instance()
 	
 	# get a random location
@@ -55,8 +57,13 @@ func create_guards():
 
 
 func _on_Timer_timeout():
-	#current_block.move_and_collide(Vector3(0, -1, 0))
 	pressed = false
+	# check down and respawn if bottomed
+	if current_block.move_and_collide(Vector3.DOWN, true, true, true):
+		# hit something, do a respawn
+		spawn_block()
+	else:
+		current_block.move_and_collide(Vector3.DOWN)
 
 func _physics_process(delta):
 	var direction = Vector3.ZERO
@@ -68,9 +75,6 @@ func _physics_process(delta):
 	if Input.is_action_pressed("down"):
 		direction.y -= 1
 
-	if !pressed && direction != Vector3.ZERO:
-		var result = current_block.move_and_collide(direction, true, true, true)
-		print(result)
-		if !result:
-			current_block.move_and_collide(direction)
-			pressed = true
+	if !pressed && direction != Vector3.ZERO && !current_block.move_and_collide(direction, true, true, true):
+		current_block.move_and_collide(direction)
+		pressed = true
